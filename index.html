@@ -281,7 +281,10 @@ let bleDev = null;
 async function bleConnect() {
   try {
     if (!bleDev) {
-      bleDev = await navigator.bluetooth.requestDevice({ filters: [{ services: [BLE_SVC] }] });
+      // 서비스 UUID 또는 이름 "CN7-DASH" 로 찾음 (어느 쪽이 광고에 보이든 잡히게)
+      bleDev = await navigator.bluetooth.requestDevice({
+        filters: [{ services: [BLE_SVC] }, { name: "CN7-DASH" }, { namePrefix: "CN7" }],
+        optionalServices: [BLE_SVC] });
       bleDev.addEventListener("gattserverdisconnected", () => { toast("블루투스 끊김 · 다시 연결 중"); setTimeout(bleConnect, 1000); });
     }
     const srv = await bleDev.gatt.connect();
